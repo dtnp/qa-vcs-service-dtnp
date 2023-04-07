@@ -21,6 +21,7 @@ type APIResponse struct {
 	Data         VcsResponse
 	StatusCode   int
 	Timestamp    int
+	ResponseTime int64
 }
 
 type SendRequestParams struct {

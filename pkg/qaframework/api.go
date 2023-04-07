@@ -73,7 +73,9 @@ func APICallByGET(conf config.Config, ed EndpointData) (APIResponse, error) {
 	}
 
 	srp := SendRequestParams{Url: url, Method: ed.Method}
+	ts := time.Now()
 	statusCode, response, err := SendRequest(srp)
+	elapsed := time.Since(ts)
 	if err != nil {
 		return APIResponse{}, err
 	}
@@ -93,6 +95,7 @@ func APICallByGET(conf config.Config, ed EndpointData) (APIResponse, error) {
 		Data:         responseObject,
 		StatusCode:   statusCode,
 		Timestamp:    int(time.Now().Unix()),
+		ResponseTime: elapsed.Milliseconds(),
 	}, nil
 }
 

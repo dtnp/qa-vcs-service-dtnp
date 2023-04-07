@@ -30,6 +30,7 @@ func TestGetRequestingSourceQuery(t *testing.T) {
 		req.True(res.Data.Success)
 		req.NotEmpty(res.Data.Data)
 		req.GreaterOrEqual(res.Data.Timestamp, res.Timestamp)
+		req.LessOrEqual(res.ResponseTime, int64(300))
 
 		// Hardcoded as of April 04, 2023 based on total values in DB at the time
 		req.GreaterOrEqual(len(res.Data.Data), 5)
