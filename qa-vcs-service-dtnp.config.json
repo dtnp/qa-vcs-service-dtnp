@@ -1,0 +1,24 @@
+{
+  "app": {
+    "name": "qa-vcs-service-dtnp",
+    "env": "local"
+  },
+  "api": {
+    "host": "0.0.0.0",
+    "port": "7800",
+    "defaultVersion": "v1"
+  },
+  "log": {
+    "debug": true,
+    "json": false
+  },
+  "allure": {
+    "enabled": false
+  },
+  "batch": {
+  },
+  "db": {
+  },
+  "pubsub": {
+  }
+}
