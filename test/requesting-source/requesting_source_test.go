@@ -40,6 +40,8 @@ func TestMain(m *testing.M) {
 	os.Exit(success)
 }
 
+// GetEndpointData reads the basic details from the endpoints file in
+//   this specific folder
 func GetEndpointData(method string, name string) (qaframework.EndpointData, error) {
 	me := strings.ToLower(fmt.Sprintf("%s %s", method, name))
 

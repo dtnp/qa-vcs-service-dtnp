@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"go-webservices-automation/pkg/config"
 	"go-webservices-automation/pkg/qaframework"
@@ -33,6 +34,8 @@ func TestMain(m *testing.M) {
 	TS.Log = qas.Log
 	TS.config = qas.Config
 
+	time.Sleep(1*time.Second)
+
 	// Run Tests
 	success := m.Run()
 	qas.Log.Infow("test completion", "section", SectionName)
@@ -40,6 +43,8 @@ func TestMain(m *testing.M) {
 	os.Exit(success)
 }
 
+// GetEndpointData reads the basic details from the endpoints file in
+//   this specific folder
 func GetEndpointData(method string, name string) (qaframework.EndpointData, error) {
 	me := strings.ToLower(fmt.Sprintf("%s %s", method, name))
 

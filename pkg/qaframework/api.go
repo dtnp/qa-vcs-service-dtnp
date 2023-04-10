@@ -56,6 +56,10 @@ func SendRequest(params SendRequestParams) (int, *http.Response, error) {
 }
 
 
+// APICallByGET does a GET call to an API
+//  NOTE: This probably can be more generic as we pass in the METHODs
+//  but it might be easier to split these by method types (GET, POST, etc)
+//  because we can have more control and have fewer conditionals (if's)
 func APICallByGET(conf config.Config, ed EndpointData) (APIResponse, error) {
 	v := conf.Api.DefaultVersion
 	if ed.Version != "" {

@@ -13,13 +13,15 @@ type QAFramework struct {
 
 var qaf QAFramework
 
-// Setup setup
+// Setup sets up the overall sections in the test folder
 func Setup(sectionName string) (QAFramework, error) {
 	// Debugger Setup
+	// TODO eww, don't hard code anything in here
 	qaf.Log, _ = logger.GetDevelopmentLogger("qa-vcs-service-dtn","1", false)
 	qaf.Log.Infow("test setup", "section", sectionName)
 
 	// Log Configs
+	// TODO eww, don't hard code anything in here
 	c, err := config.GetConfig("../../qa-vcs-service-dtnp.config.json")
 	if err != nil {
 		return QAFramework{}, err

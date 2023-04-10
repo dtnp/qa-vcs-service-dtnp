@@ -4,6 +4,7 @@ import (
 	"go-webservices-automation/pkg/qaframework"
 )
 
+// endpoints are the individual endpoints for this specific folder
 func endpoints() map[string]qaframework.EndpointData {
 	return map[string]qaframework.EndpointData {
 		"get requestingtechquery": {
