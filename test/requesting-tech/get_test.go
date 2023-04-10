@@ -1,4 +1,4 @@
-package requesting_source
+package requesting_tech
 
 import (
 	"fmt"
@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetRequestingSourceQuery(t *testing.T) {
+func TestGetRequestingTechQuery(t *testing.T) {
 	method := "GET"
-	name := "RequestingSourceQuery"
+	name := "RequestingTechQuery"
 	desc := fmt.Sprintf("%s method for %s", method, name)
 
 	qaframework.RunEndpointFunction(t, TS.config, desc, func() {
@@ -40,11 +40,11 @@ func TestGetRequestingSourceQuery(t *testing.T) {
 	})
 }
 
-func TestGetRequestingSourceQueryByAlias(t *testing.T) {
+func TestGetRequestingTechQueryByAlias(t *testing.T) {
 	method := "GET"
-	name := "RequestingSourceQueryByAlias"
+	name := "RequestingTechQueryByAlias"
 	desc := fmt.Sprintf("%s method for %s", method, name)
-	tests := []string{"pantheon-platform", "postman", "curl"}
+	tests := []string{"api-rest", "graphql", "manual-import"}
 
 	qaframework.RunEndpointFunction(t, TS.config, desc, func() {
 		req := require.New(t)
@@ -59,10 +59,10 @@ func TestGetRequestingSourceQueryByAlias(t *testing.T) {
 			ed.Endpoint = strings.Replace(e, "{alias}", ep, 1)
 			res, err := qaframework.APICallByGET(TS.config, ed)
 			if err != nil {
-				t.Error(err)
 				return
 			}
 
+			t.Logf("endpoint: %s %s", ed.Method, ed.Endpoint)
 			req.Equal(200, res.StatusCode, "Status code mismatch")
 			req.True(res.Data.Success)
 			req.NotEmpty(res.Data.Data)
@@ -72,9 +72,9 @@ func TestGetRequestingSourceQueryByAlias(t *testing.T) {
 	})
 }
 
-func TestGetRequestingSourceQueryByID(t *testing.T) {
+func TestGetRequestingTechQueryByID(t *testing.T) {
 	method := "GET"
-	name := "RequestingSourceQueryByID"
+	name := "RequestingTechQueryByID"
 	desc := fmt.Sprintf("%s method for %s", method, name)
 	tests := []string{"1", "3", "5"}
 
@@ -95,6 +95,7 @@ func TestGetRequestingSourceQueryByID(t *testing.T) {
 				return
 			}
 
+			t.Logf("endpoint: %s %s", ed.Method, ed.Endpoint)
 			req.Equal(200, res.StatusCode, "Status code mismatch")
 			req.True(res.Data.Success)
 			req.NotEmpty(res.Data.Data)

@@ -1,4 +1,4 @@
-package requesting_source
+package requesting_tech
 
 import (
 	"go-webservices-automation/pkg/qaframework"
@@ -6,21 +6,21 @@ import (
 
 func endpoints() map[string]qaframework.EndpointData {
 	return map[string]qaframework.EndpointData {
-		"get requestingsourcequery": {
+		"get requestingtechquery": {
 			Method: "GET",
-			Endpoint: "requesting-source",
+			Endpoint: "requesting-tech",
 			Version:   "v1",
 			URLParams: "",
 		},
-		"get requestingsourcequerybyalias": {
+		"get requestingtechquerybyalias": {
 			Method: "GET",
-			Endpoint: "requesting-source/alias/{alias}",
+			Endpoint: "requesting-tech/alias/{alias}",
 			Version:   "v1",
 			URLParams: "",
 		},
-		"get requestingsourcequerybyid": {
+		"get requestingtechquerybyid": {
 			Method: "GET",
-			Endpoint: "requesting-source/{id}",
+			Endpoint: "requesting-tech/{id}",
 			Version:   "v1",
 			URLParams: "",
 		},
