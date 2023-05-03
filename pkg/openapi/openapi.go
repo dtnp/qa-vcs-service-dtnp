@@ -347,11 +347,11 @@ func #FUNCTION_NAME#(t *testing.T) {
 			}
 
 			t.Logf("endpoint: %s %s", ed.Method, ed.Endpoint)
-			req.Equal(200, res.StatusCode, "Status code mismatch")
+			req.Equal(ed.StatusCode, res.StatusCode, "Status code mismatch")
 			req.True(res.Data.Success)
 			req.NotEmpty(res.Data.Data)
 			req.GreaterOrEqual(res.Data.Timestamp, res.Timestamp)
-			req.LessOrEqual(res.ResponseTime, int64(300))
+			req.LessOrEqual(res.ResponseTime, int64(ed.MaxExecutionTime))
 		}
 	})
 }
