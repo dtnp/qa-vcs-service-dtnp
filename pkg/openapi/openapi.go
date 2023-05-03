@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -110,8 +111,6 @@ func CreateEndpointsFile(endpoint string, data []string) {
 	for _, d := range data {
 		td = fmt.Sprintf("%s\n%s", td, d)
 	}
-
-	fmt.Printf("TEST DATA: %v", td)
 
 	if !FileExists(endpointFilePath) {
 		f, err := os.Create(endpointFilePath)
@@ -215,6 +214,7 @@ func CreateTestCase(filePath string, endpoint string, method string, statusCode 
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"go-webservices-automation/pkg/qaframework"
@@ -258,7 +258,14 @@ import (
 //}
 //`
 
-		testCase := TemplateGet(testCaseName, method)
+		// Some tests have dynamic aspects that we pass in like {id} for ID's
+		var testCase string
+		if strings.Contains(endpoint, "{") {
+			testCase = TemplateGetDynamicURL(testCaseName, method, endpoint)
+		} else {
+			testCase = TemplateGet(testCaseName, method)
+		}
+
 		//testCase := fmt.Sprintf(testCaseTemplate, testCaseName, description, testCaseName, statusCode)
 		// Open the file in append mode
 		file, err := os.OpenFile(methodFile, os.O_APPEND|os.O_WRONLY, 0644)
@@ -307,6 +314,52 @@ func #FUNCTION_NAME#(t *testing.T) {
 `
 	output = strings.ReplaceAll(output, "#FUNCTION_NAME#", name)
 	output = strings.Replace(output, "#METHOD#", method, 1)
+	return output
+}
+
+func TemplateGetDynamicURL(name string, method string, endpoint string) string {
+	var re = regexp.MustCompile(`\{[a-zA-Z0-9]+\}`)
+	match := re.FindStringSubmatch(endpoint)
+	dynamic := match[len(match)-1]
+
+	output := `
+func #FUNCTION_NAME#(t *testing.T) {
+	method := "#METHOD#"
+	name := "#FUNCTION_NAME#"
+	desc := fmt.Sprintf("%s method for %s", method, name)
+	// This endpoint can pass in multiple tests, comma separated
+	tests := []string{""}
+
+	qaframework.RunEndpointFunction(t, TS.config, desc, func() {
+		req := require.New(t)
+		ed, err := GetEndpointData(method, name)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		e := ed.Endpoint
+		for _, ep := range tests {
+			ed.Endpoint = strings.Replace(e, "#DYNAMIC#", ep, 1)
+			res, err := qaframework.APICallByGET(TS.config, ed)
+			if err != nil {
+				return
+			}
+
+			t.Logf("endpoint: %s %s", ed.Method, ed.Endpoint)
+			req.Equal(200, res.StatusCode, "Status code mismatch")
+			req.True(res.Data.Success)
+			req.NotEmpty(res.Data.Data)
+			req.GreaterOrEqual(res.Data.Timestamp, res.Timestamp)
+			req.LessOrEqual(res.ResponseTime, int64(300))
+		}
+	})
+}
+`
+	output = strings.ReplaceAll(output, "#FUNCTION_NAME#", name)
+	output = strings.Replace(output, "#METHOD#", method, 1)
+	output = strings.Replace(output, "#DYNAMIC#", dynamic, 1)
+
 	return output
 }
 
