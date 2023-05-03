@@ -3,10 +3,12 @@ package qaframework
 import "time"
 
 type EndpointData struct {
-	Method    string `json:"method"`
-	Endpoint  string `json:"endpoint"`
-	Version   string `json:"version"`
-	URLParams string `json:"appendAPIendpoint"`
+	Method           string `json:"method"`
+	Endpoint         string `json:"endpoint"`
+	Version          string `json:"version"`
+	URLParams        string `json:"appendAPIendpoint"`
+	StatusCode       int    `json:"status_code"`
+	MaxExecutionTime int    `json:"max_execution_time"`
 }
 
 type APIDetails struct {

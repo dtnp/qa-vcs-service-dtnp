@@ -66,7 +66,7 @@ func APICallByGET(conf config.Config, ed EndpointData) (APIResponse, error) {
 		v = ed.Version
 	}
 	url := fmt.Sprintf(
-		"http://%s:%s/%s/%s",
+		"http://%s:%s/%s%s",
 			conf.Api.Host,
 			conf.Api.Port,
 			v,

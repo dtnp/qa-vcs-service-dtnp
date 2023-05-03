@@ -22,7 +22,7 @@ func Setup(sectionName string) (QAFramework, error) {
 
 	// Log Configs
 	// TODO eww, don't hard code anything in here
-	c, err := config.GetConfig("../../qa-vcs-service-dtnp.config.json")
+	c, err := config.GetConfig("../../../qa-vcs-service-dtnp.config.json")
 	if err != nil {
 		return QAFramework{}, err
 	}

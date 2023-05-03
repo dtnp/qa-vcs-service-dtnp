@@ -8,10 +8,12 @@ import (
 func endpoints() map[string]qaframework.EndpointData {
 	return map[string]qaframework.EndpointData {
 		"get requestingtechquery": {
-			Method: "GET",
-			Endpoint: "requesting-tech",
-			Version:   "v1",
-			URLParams: "",
+			Method:           "GET",
+			Endpoint:         "requesting-tech",
+			Version:          "v1",
+			URLParams:        "",
+			StatusCode:       200,
+			MaxExecutionTime: 300,
 		},
 		"get requestingtechquerybyalias": {
 			Method: "GET",
