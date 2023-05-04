@@ -61,19 +61,30 @@ func SendRequest(params SendRequestParams) (int, *http.Response, error) {
 //  but it might be easier to split these by method types (GET, POST, etc)
 //  because we can have more control and have fewer conditionals (if's)
 func APICallByGET(conf config.Config, ed EndpointData) (APIResponse, error) {
-	v := conf.Api.DefaultVersion
+	return APICallByGETDynamic(conf, ed, nil)
+}
+
+// APICallByGETDynamic does a GET call to an API
+//  NOTE: This probably can be more generic as we pass in the METHODs
+//  but it might be easier to split these by method types (GET, POST, etc)
+//  because we can have more control and have fewer conditionals (if's)
+func APICallByGETDynamic(conf config.Config, ed EndpointData, dynamic map[string]string) (APIResponse, error) {
+	ver := conf.Api.DefaultVersion
 	if ed.Version != "" {
-		v = ed.Version
+		ver = ed.Version
 	}
 	url := fmt.Sprintf(
 		"http://%s:%s/%s%s",
-			conf.Api.Host,
-			conf.Api.Port,
-			v,
-			ed.Endpoint,
-		)
+		conf.Api.Host,
+		conf.Api.Port,
+		ver,
+		ed.Endpoint,
+	)
 	if ed.URLParams != "" {
 		url = fmt.Sprintf("%s%s", url, ed.URLParams)
+	}
+	for key, val := range dynamic {
+		url = strings.Replace(url, key, val, 1)
 	}
 
 	srp := SendRequestParams{Url: url, Method: ed.Method}
@@ -81,17 +92,17 @@ func APICallByGET(conf config.Config, ed EndpointData) (APIResponse, error) {
 	statusCode, response, err := SendRequest(srp)
 	elapsed := time.Since(ts)
 	if err != nil {
-		return APIResponse{}, err
+		return APIResponse{URL: url, StatusCode: statusCode}, err
 	}
 
 	resp, err := io.ReadAll(response.Body)
 	if err != nil {
-		return APIResponse{}, nil
+		return APIResponse{URL: url, StatusCode: statusCode}, nil
 	}
 
 	var responseObject VcsResponse
 	if err := json.Unmarshal(resp, &responseObject); err != nil {
-		return APIResponse{}, nil
+		return APIResponse{URL: url, StatusCode: statusCode}, nil
 	}
 
 	return APIResponse{
@@ -100,7 +111,6 @@ func APICallByGET(conf config.Config, ed EndpointData) (APIResponse, error) {
 		StatusCode:   statusCode,
 		Timestamp:    int(time.Now().Unix()),
 		ResponseTime: elapsed.Milliseconds(),
+		URL: url,
 	}, nil
 }
-
-

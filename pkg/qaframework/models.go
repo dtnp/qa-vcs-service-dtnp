@@ -24,6 +24,7 @@ type APIResponse struct {
 	StatusCode   int
 	Timestamp    int
 	ResponseTime int64
+	URL          string
 }
 
 type SendRequestParams struct {
