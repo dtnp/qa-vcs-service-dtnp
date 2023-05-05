@@ -97,12 +97,12 @@ func APICallByGETDynamic(conf config.Config, ed EndpointData, dynamic map[string
 
 	resp, err := io.ReadAll(response.Body)
 	if err != nil {
-		return APIResponse{URL: url, StatusCode: statusCode}, nil
+		return APIResponse{URL: url, StatusCode: statusCode}, err
 	}
 
 	var responseObject VcsResponse
-	if err := json.Unmarshal(resp, &responseObject); err != nil {
-		return APIResponse{URL: url, StatusCode: statusCode}, nil
+	if err = json.Unmarshal(resp, &responseObject); err != nil {
+		return APIResponse{URL: url, StatusCode: statusCode}, err
 	}
 
 	return APIResponse{
