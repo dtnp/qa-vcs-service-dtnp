@@ -253,12 +253,10 @@ func SetupTestPackage(packageName string) error {
 			return err
 		}
 		tpl := NewTestTemplate(packageName)
-		fmt.Printf("%s\n--------------------\n\n", tpl)
-		n, err := f.WriteString(tpl)
+		_, err = f.WriteString(tpl)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("created %s: %d bytes\n", testFile, n)
 	}
 
 	return nil
@@ -365,7 +363,7 @@ func TemplateGetDynamic(e Endpoint) string {
 	output := `
 func #FUNCTION_NAME#(t *testing.T) {
 	// This endpoint can pass in multiple tests, comma separated
-	tests := []string{""}
+	tests := []string{"#BADSTRING#"}
 
 	RunTest(t, "#FUNCTION_NAME#", func(e qaframework.EndpointData) {
 		req := require.New(t)
@@ -378,17 +376,34 @@ func #FUNCTION_NAME#(t *testing.T) {
 			}
 
 			t.Logf("method: %s, url: %s", e.Method, res.URL)
-			req.Equal(200, res.StatusCode, "Status code mismatch")
-			req.True(res.Data.Success)
-			req.NotEmpty(res.Data.Data)
+			req.Equal(#STATUSCODE#, res.StatusCode, "Status code mismatch")
+			req.#SUCCESS#(res.Data.Success)
+			req.#EMPTY#(res.Data.Data)
 			req.GreaterOrEqual(res.Data.Timestamp, res.Timestamp)
 			req.LessOrEqual(res.ResponseTime, int64(300))
 		}
 	})
 }
 `
+	// Default Success Values
+	sc := fmt.Sprintf("%d", e.StatusCode)
+	badString := ""
+	success := "True"
+	empty := "NotEmpty"
+	if e.StatusCode >= 300 {
+		success = "False"
+		empty = "Empty"
+	}
+	if e.StatusCode == 404 {
+		badString = "lanflknasdlnd"
+	}
+
 	output = strings.ReplaceAll(output, "#FUNCTION_NAME#", e.TestCaseName)
 	output = strings.Replace(output, "#DYNAMIC#", dynamic, 1)
+	output = strings.Replace(output, "#STATUSCODE#", sc, 1)
+	output = strings.Replace(output, "#SUCCESS#", success, 1)
+	output = strings.Replace(output, "#EMPTY#", empty, 1)
+	output = strings.Replace(output, "#BADSTRING#", badString, 1)
 
 	return output
 }
