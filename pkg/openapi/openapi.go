@@ -239,7 +239,6 @@ func GetPackageName(endpointPath string) string {
 func SetupTestPackage(packageName string) error {
 	swaggerDirPath := fmt.Sprintf("test/swagger/%s", packageName)
 	testFile := fmt.Sprintf("%s/%s_test.go", swaggerDirPath, packageName)
-	endpointFile := fmt.Sprintf("%s/endpoints.go", swaggerDirPath)
 
 	// Check if the folder already exists.  If not, create it
 	if !FileExists(swaggerDirPath) {
@@ -262,13 +261,6 @@ func SetupTestPackage(packageName string) error {
 		fmt.Printf("created %s: %d bytes\n", testFile, n)
 	}
 
-	// Creates the endpoints file for all the individual endpoints
-	if !FileExists(endpointFile) {
-		_, err := os.Create(testFile)
-		if err != nil {
-			return err
-		}
-	}
 	return nil
 }
 
@@ -291,6 +283,7 @@ func CreateEndpointsFile(e Endpoint, endpointData []string) error {
 	for _, d := range endpointData {
 		builder.WriteString(d)
 	}
+	builder.WriteString("// ENDPOINTDATA")
 
 	if !FileExists(endpointFilePath) {
 		f, err := os.Create(endpointFilePath)
@@ -508,7 +501,5 @@ func RunTest(t *testing.T, endpointName string, f func(data qaframework.Endpoint
 	qaframework.RunEndpointFunction(t, TS.config, ed, f)
 }
 `
-	o := strings.ReplaceAll(output, "#PACKAGE_NAME#", section)
-	fmt.Println(o)
-	return o
+	return strings.ReplaceAll(output, "#PACKAGE_NAME#", section)
 }
